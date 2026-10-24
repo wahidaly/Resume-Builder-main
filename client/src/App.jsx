@@ -6,7 +6,7 @@ import ResumeBuilder from "./pages/ResumeBuilder";
 import Preview from "./pages/Preview";
 import { useDispatch } from "react-redux";
 import api from "./configs/api";
-import { login, setLoading } from "./app/features/authSlice";
+import { login, logout, setLoading } from "./app/features/authSlice";
 import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 
@@ -15,23 +15,31 @@ const App = () => {
 
   const getUserData = async () => {
     const token = localStorage.getItem("token");
+
+    if (!token) {
+      dispatch(setLoading(false));
+      return;
+    }
+
     try {
-      if (token) {
-        const { data } = await api.get("/api/users/data", {
-          headers: { Authorization: token },
-        });
+      const { data } = await api.get("/api/users/data", {
+        headers: { Authorization: token },
+      });
 
-        if (data.user) {
-          dispatch(login({ token, user: data.user }));
-        }
-
-        dispatch(setLoading(false));
-      } else {
-        dispatch(setLoading(false));
+      if (data.user) {
+        dispatch(login({ token, user: data.user }));
       }
     } catch (error) {
+      const status = error.response?.status;
+
+      if (status === 401 || status === 403) {
+        // Clear expired or invalid credentials so the user can sign in again.
+        dispatch(logout());
+      } else {
+        console.error("Failed to restore the saved session:", error.message);
+      }
+    } finally {
       dispatch(setLoading(false));
-      console.log(error.message);
     }
   };
 
