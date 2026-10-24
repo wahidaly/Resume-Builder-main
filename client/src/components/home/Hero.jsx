@@ -7,13 +7,9 @@ const Hero = () => {
 
   const { user } = useSelector((state) => state.auth);
 
-  const logos = [
-    "https://saasly.prebuiltui.com/assets/companies-logo/instagram.svg",
-    "https://saasly.prebuiltui.com/assets/companies-logo/framer.svg",
-    "https://saasly.prebuiltui.com/assets/companies-logo/microsoft.svg",
-    "https://saasly.prebuiltui.com/assets/companies-logo/huawei.svg",
-    "https://saasly.prebuiltui.com/assets/companies-logo/walmart.svg",
-  ];
+  // Use text labels instead of third-party logo images so the landing page
+  // doesn't depend on an external asset host with certificate errors.
+  const logos = ["Instagram", "Framer", "Microsoft", "Huawei", "Walmart"];
 
   return (
     <>
@@ -235,13 +231,13 @@ const Hero = () => {
             className="flex flex-wrap justify-between max-sm:justify-center gap-6 max-w-3xl w-full mx-auto py-4"
             id="logo-container"
           >
-            {logos.map((logo, index) => (
-              <img
-                key={index}
-                src={logo}
-                alt="logo"
-                className="h-6 w-auto max-w-xs"
-              />
+            {logos.map((logo) => (
+              <span
+                key={logo}
+                className="text-slate-600 font-semibold tracking-tight"
+              >
+                {logo}
+              </span>
             ))}
           </div>
         </div>
