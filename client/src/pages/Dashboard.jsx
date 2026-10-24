@@ -60,13 +60,34 @@ const Dashboard = () => {
 
   const uploadResume = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
 
+    // The PDF parser needs a real File; calling it with null causes a
+    // createObjectURL overload error if the user hasn't selected a file.
+    if (!(resume instanceof File)) {
+      toast.error("Please select a PDF resume first.");
+      return;
+    }
+
+    const isPdf =
+      resume.type === "application/pdf" ||
+      resume.name.toLowerCase().endsWith(".pdf");
+
+    if (!isPdf) {
+      toast.error("Please select a PDF file.");
+      return;
+    }
+
+    if (!title.trim()) {
+      toast.error("Please enter a resume title.");
+      return;
+    }
+
+    setIsLoading(true);
     try {
       const resumeText = await pdfToText(resume);
       const { data } = await api.post(
         "/api/ai/upload-resume",
-        { title, resumeText },
+        { title: title.trim(), resumeText },
         { headers: { Authorization: token } }
       );
       setTitle("");
@@ -75,8 +96,9 @@ const Dashboard = () => {
       navigate(`/app/builder/${data.resumeId}`);
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const editTitle = async (e) => {
@@ -293,7 +315,7 @@ const Dashboard = () => {
                   id="resume-input"
                   accept=".pdf"
                   hidden
-                  onChange={(e) => setResume(e.target.files[0])}
+                  onChange={(e) => setResume(e.target.files?.[0] || null)}
                 />
               </div>
 
