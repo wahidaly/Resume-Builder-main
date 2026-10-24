@@ -8,6 +8,7 @@ import {
   Phone,
   User,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const PersonalInfoForm = ({
   data,
@@ -15,6 +16,25 @@ const PersonalInfoForm = ({
   removeBackground,
   setRemoveBackground,
 }) => {
+  const [imagePreviewUrl, setImagePreviewUrl] = useState("");
+  const imageIsBlob =
+    typeof Blob !== "undefined" && data.image instanceof Blob;
+
+  useEffect(() => {
+    if (typeof data.image === "string") {
+      setImagePreviewUrl(data.image);
+      return;
+    }
+
+    if (typeof Blob !== "undefined" && data.image instanceof Blob) {
+      const url = URL.createObjectURL(data.image);
+      setImagePreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+
+    setImagePreviewUrl("");
+  }, [data.image]);
+
   const handleChange = (field, value) => {
     onChange({ ...data, [field]: value });
   };
@@ -57,13 +77,9 @@ const PersonalInfoForm = ({
       </p>
       <div className="flex items-center gap-2">
         <label>
-          {data.image ? (
+          {imagePreviewUrl ? (
             <img
-              src={
-                typeof data.image === "string"
-                  ? data.image
-                  : URL.createObjectURL(data.image)
-              }
+              src={imagePreviewUrl}
               alt="user-image"
               className="w-16 h-16 rounded-full object-cover mt-5 ring ring-slate-300 hover:opacity-80"
             />
@@ -78,11 +94,15 @@ const PersonalInfoForm = ({
             type="file"
             accept="image/jpeg, image/png"
             className="hidden"
-            onChange={(e) => handleChange("image", e.target.files[0])}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleChange("image", file);
+              e.target.value = "";
+            }}
           />
         </label>
 
-        {typeof data.image === "object" && (
+        {imageIsBlob && (
           <div className="flex flex-col gap-1 pl-4 text-sm">
             <p>Remove Background</p>
             <label className="relative inline-flex items-center cursor-pointer text-gray-900 gap-3">
