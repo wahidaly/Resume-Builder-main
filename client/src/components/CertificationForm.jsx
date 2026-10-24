@@ -1,4 +1,5 @@
 import { Plus, ShieldCheck, Trash2 } from "lucide-react";
+import { toMonthInput } from "../utils/date.js";
 
 const CertificationForm = ({ data, onChange }) => {
   const addCertification = () => {
@@ -100,7 +101,7 @@ const CertificationForm = ({ data, onChange }) => {
                   className=" px-3 py-2 text-sm"
                 />
                 <input
-                  value={certification.issue_date || ""}
+                  value={toMonthInput(certification.issue_date)}
                   onChange={(e) =>
                     updateCertification(index, "issue_date", e.target.value)
                   }
