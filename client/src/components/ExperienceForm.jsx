@@ -1,5 +1,6 @@
 import { Briefcase, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { toMonthInput } from "../utils/date.js";
 import { useSelector } from "react-redux";
 import api from "../configs/api";
 import toast from "react-hot-toast";
@@ -113,7 +114,7 @@ const ExperienceForm = ({ data, onChange }) => {
                   className=" px-3 py-2 text-sm rounded-lg"
                 />
                 <input
-                  value={experience.start_date || ""}
+                  value={toMonthInput(experience.start_date)}
                   onChange={(e) =>
                     updateExperience(index, "start_date", e.target.value)
                   }
@@ -121,7 +122,7 @@ const ExperienceForm = ({ data, onChange }) => {
                   className=" px-3 py-2 text-sm rounded-lg"
                 />
                 <input
-                  value={experience.end_date || ""}
+                  value={toMonthInput(experience.end_date)}
                   onChange={(e) =>
                     updateExperience(index, "end_date", e.target.value)
                   }
