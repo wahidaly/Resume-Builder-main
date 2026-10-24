@@ -1,4 +1,5 @@
 import { GraduationCap, Plus, Trash2 } from "lucide-react";
+import { toMonthInput } from "../utils/date.js";
 
 const EducationForm = ({ data, onChange }) => {
   const addEducation = () => {
@@ -94,7 +95,7 @@ const EducationForm = ({ data, onChange }) => {
                   className=" px-3 py-2 text-sm"
                 />
                 <input
-                  value={education.graduation_date || ""}
+                  value={toMonthInput(education.graduation_date)}
                   onChange={(e) =>
                     updateEducation(index, "graduation_date", e.target.value)
                   }
